@@ -1,0 +1,65 @@
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x1 (POWERON),boot:0x8 (SPI_FAST_FLASH_BOOT)
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2810,len:0x178c
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xcb8
+load:0x403cb700,len:0x2db0
+entry 0x403c8914
+[0;32mI (27) boot: ESP-IDF v5.3.1 2nd stage bootloader[0m
+[0;32mI (27) boot: compile time Nov  1 2024 21:13:12[0m
+[0;32mI (27) boot: Multicore bootloader[0m
+[0;32mI (30) boot: chip revision: v0.1[0m
+[0;32mI (34) boot.esp32s3: Boot SPI Speed : 80MHz[0m
+[0;32mI (38) boot.esp32s3: SPI Mode       : DIO[0m
+[0;32mI (43) boot.esp32s3: SPI Flash Size : 2MB[0m
+[0;32mI (48) boot: Enabling RNG early entropy source...[0m
+[0;32mI (53) boot: Partition Table:[0m
+[0;32mI (57) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (64) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (72) boot:  1 phy_init         RF data          01 01 0000f000 00001000[0m
+[0;32mI (79) boot:  2 factory          factory app      00 00 00010000 00100000[0m
+[0;32mI (87) boot: End of partition table[0m
+[0;32mI (91) esp_image: segment 0: paddr=00010020 vaddr=3c030020 size=0bd80h ( 48512) map[0m
+[0;32mI (108) esp_image: segment 1: paddr=0001bda8 vaddr=3fc93300 size=02a64h ( 10852) load[0m
+[0;32mI (111) esp_image: segment 2: paddr=0001e814 vaddr=40374000 size=01804h (  6148) load[0m
+[0;32mI (118) esp_image: segment 3: paddr=00020020 vaddr=42000020 size=24aach (150188) map[0m
+[0;32mI (152) esp_image: segment 4: paddr=00044ad4 vaddr=40375804 size=0da70h ( 55920) load[0m
+[0;32mI (170) boot: Loaded app from partition at offset 0x10000[0m
+[0;32mI (170) boot: Disabling RNG early entropy source...[0m
+[0;32mI (182) cpu_start: Multicore app[0m
+[0;32mI (192) cpu_start: Pro cpu start user code[0m
+[0;32mI (192) cpu_start: cpu freq: 160000000 Hz[0m
+[0;32mI (192) app_init: Application information:[0m
+[0;32mI (195) app_init: Project name:     esp32_code[0m
+[0;32mI (200) app_init: App version:      1[0m
+[0;32mI (204) app_init: Compile time:     Nov  1 2024 21:11:49[0m
+[0;32mI (210) app_init: ELF file SHA256:  64c2113f0...[0m
+[0;32mI (216) app_init: ESP-IDF:          v5.3.1[0m
+[0;32mI (220) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (225) efuse_init: Max chip rev:     v0.99 [0m
+[0;32mI (230) efuse_init: Chip rev:         v0.1[0m
+[0;32mI (235) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (242) heap_init: At 3FC96670 len 000530A0 (332 KiB): RAM[0m
+[0;32mI (248) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM[0m
+[0;32mI (254) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM[0m
+[0;32mI (260) heap_init: At 600FE100 len 00001EE8 (7 KiB): RTCRAM[0m
+[0;32mI (268) spi_flash: detected chip: gd[0m
+[0;32mI (271) spi_flash: flash io: dio[0m
+[0;33mW (275) spi_flash: Detected size(16384k) larger than the size in the binary image header(2048k). Using the size in the binary image header.[0m
+[0;32mI (288) sleep: Configure to isolate all GPIO pins in sleep state[0m
+[0;32mI (295) sleep: Enable automatic switching of GPIO sleep configuration[0m
+[0;32mI (302) main_task: Started on CPU0[0m
+[0;32mI (322) main_task: Calling app_main()[0m
+[0;32mI (322) ESP32: Iniciando ESP32[0m
+[0;32mI (322) ESP32: Iniciando tarea send_periodic_data[0m
+[0;32mI (322) main_task: Returned from app_main()[0m
+[0;32mI (342) ESP32: Enviando datos: {"NF_AI_PTL":933,"NF_AI_TTL":529,"NF_AI_PTC":752,"NF_AI_PTA":119,"NF_AI_TTA":843,"NF_AI_FT":393,"NF_DI_YA1":true,"NF_DI_YA2":true,"NF_DI_GZA":true,"NF_DI_EAAC":true,"NF_DI_EADC":true,"NF_DO_XV":false,"NF_SF_PTL":44,"NF_SF_TTL":1,"NF_SF_PTC":57,"NF_SF_PTA":12,"NF_SF_TTA":6,"NF_SF_FT":31,"NF_SO_PTL":2,"NF_SO_TTL":8,"NF_SO_PTC":6,"NF_SO_PTA":1,"NF_SO_TTA":8,"NF_SO_FT":6,"NF_SV_PTL":41054,"NF_SV_TTL":537,"NF_SV_PTC":42870,"NF_SV_PTA":1429,"NF_SV_TTA":5066,"NF_SV_FT":12189}[0m
+[0;32mI (1422) ESP32: Enviando datos: {"NF_AI_PTL":933,"NF_AI_TTL":529,"NF_AI_PTC":752,"NF_AI_PTA":119,"NF_AI_TTA":843,"NF_AI_FT":393,"NF_DI_YA1":true,"NF_DI_YA2":true,"NF_DI_GZA":true,"NF_DI_EAAC":true,"NF_DI_EADC":true,"NF_DO_XV":false,"NF_SF_PTL":44,"NF_SF_TTL":1,"NF_SF_PTC":57,"NF_SF_PTA":12,"NF_SF_TTA":6,"NF_SF_FT":31,"NF_SO_PTL":2,"NF_SO_TTL":8,"NF_SO_PTC":6,"NF_SO_PTA":1,"NF_SO_TTA":8,"NF_SO_FT":6,"NF_SV_PTL":41054,"NF_SV_TTL":537,"NF_SV_PTC":42870,"NF_SV_PTA":1429,"NF_SV_TTA":5066,"NF_SV_FT":12189}[0m
+[0;32mI (2502) ESP32: Enviando datos: {"NF_AI_PTL":933,"NF_AI_TTL":529,"NF_AI_PTC":752,"NF_AI_PTA":119,"NF_AI_TTA":843,"NF_AI_FT":393,"NF_DI_YA1":true,"NF_DI_YA2":true,"NF_DI_GZA":true,"NF_DI_EAAC":true,"NF_DI_EADC":true,"NF_DO_XV":false,"NF_SF_PTL":44,"NF_SF_TTL":1,"NF_SF_PTC":57,"NF_SF_PTA":12,"NF_SF_TTA":6,"NF_SF_FT":31,"NF_SO_PTL":2,"NF_SO_TTL":8,"NF_SO_PTC":6,"NF_SO_PTA":1,"NF_SO_TTA":8,"NF_SO_FT":6,"NF_SV_PTL":41054,"NF_SV_TTL":537,"NF_SV_PTC":42870,"NF_SV_PTA":1429,"NF_SV_TTA":5066,"NF_SV_FT":12189}[0m
+[0;32mI (3582) ESP32: Enviando datos: {"NF_AI_PTL":933,"NF_AI_TTL":529,"NF_AI_PTC":752,"NF_AI_PTA":119,"NF_AI_TTA":843,"NF_AI_FT":393,"NF_DI_YA1":true,"NF_DI_YA2":true,"NF_DI_GZA":true,"NF_DI_EAAC":true,"NF_DI_EADC":true,"NF_DO_XV":false,"NF_SF_PTL":44,"NF_SF_TTL":1,"NF_SF_PTC":57,"NF_SF_PTA":12,"NF_SF_TTA":6,"NF_SF_FT":31,"NF_SO_PTL":2,"NF_SO_TTL":8,"NF_SO_PTC":6,"NF_SO_PTA":1,"NF_SO_TTA":8,"NF_SO_FT":6,"NF_SV_PTL":41054,"NF_SV_TTL":537,"NF_SV_PTC":42870,"NF_SV_PTA":1429,"NF_SV_TTA":5066,"NF_SV_FT":12189}[0m
+[0;32mI (4662) ESP32: Enviando datos: {"NF_AI_PTL":933,"NF_AI_TTL":529,"NF_AI_PTC":752,"NF_AI_PTA":119,"NF_AI_TTA":843,"NF_AI_FT":393,"NF_DI_YA1":true,"NF_DI_YA2":true,"NF_DI_GZA":true,"NF_DI_EAAC":true,"NF_DI_EADC":true,"NF_DO_XV":false,"NF_SF_PTL":44,"NF_SF_TTL":1,"NF_SF_PTC":57,"NF_SF_PTA":12,"NF_SF_TTA":6,"NF_SF_FT":31,"NF_SO_PTL":2,"NF_SO_TTL":8,"NF_SO_PTC":6,"NF_SO_PTA":1,"NF_SO_TTA":8,"NF_SO_FT":6,"NF_SV_PTL":41054,"NF_SV_TTL":537,"NF_SV_PTC":42870,"NF_SV_PTA":1429,"NF_SV_TTA":5066,"NF_SV_FT":12189}[0m
+[0;32mI (5742) ESP32: Enviando datos: {"NF_AI_PTL":933,"NF_AI_TTL":529,"NF_AI_PTC":752,"NF_AI_PTA":119,"NF_AI_TTA":843,"NF_AI_FT":393,"NF_DI_YA1":true,"NF_DI_YA2":true,"NF_DI_GZA":true,"NF_DI_EAAC":true,"NF_DI_EADC":true,"NF_DO_XV":false,"NF_SF_PTL":44,"NF_SF_TTL":1,"NF_SF_PTC":57,"NF_SF_PTA":12,"NF_SF_TTA":6,"NF_SF_FT":31,"NF_SO_PTL":2,"NF_SO_TTL":8,"NF_SO_PTC":6,"NF_SO_PTA":1,"NF_SO_TTA":8,"NF_SO_FT":6,"NF_SV_PTL":41054,"NF_SV_TTL":537,"NF_SV_PTC":42870,"NF_SV_PTA":1429,"NF_SV_TTA":5066,"NF_SV_FT":12189}[0m
+[0;32mI (6822) ESP32: Enviando datos: {"NF_AI_PTL":933,"NF_AI_TTL":529,"NF_AI_PTC":752,"NF_AI_PTA":119,"NF_AI_TTA":843,"NF_AI_FT":393,"NF_DI_YA1":true,"NF_DI_YA2":true,"NF_DI_GZA":true,"NF_DI_EAAC":true,"NF_DI_EADC":true,"NF_DO_XV":false,"NF_SF_PTL":44,"NF_SF_TTL":1,"NF_SF_PTC":57,"NF_SF_PTA":12,"NF_SF_TTA":6,"NF_SF_FT":31,"NF_SO_PTL":2,"NF_SO_TTL":8,"NF_SO_PTC":6,"NF_SO_PTA":1,"NF_SO_TTA":8,"NF_SO_FT":6,"NF_SV_PTL":41054,"NF_SV_TTL":537,"NF_SV_PTC":42870,"NF_SV_PTA":1429,"NF_SV_TTA":5066,"NF_SV_FT":12189}[0m

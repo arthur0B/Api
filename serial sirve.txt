@@ -1,0 +1,37 @@
+import serial
+import json
+import re
+
+class SerialCommunication:
+    def __init__(self, port='COM5', baudrate=115200, timeout=1):
+        self.port = port
+        self.baudrate = baudrate
+        self.timeout = timeout
+        self.connection = None
+
+    def connect(self):
+        try:
+            self.connection = serial.Serial(self.port, self.baudrate, timeout=self.timeout)
+            if self.connection.is_open:
+                print(f"Conectado al ESP32 en {self.port} a {self.baudrate} baudios.")
+        except serial.SerialException as e:
+            print(f"Error al conectar: {e}")
+
+    def disconnect(self):
+        if self.connection and self.connection.is_open:
+            self.connection.close()
+            print("Conexión cerrada.")
+
+    def read_data(self):
+        if self.connection and self.connection.is_open:
+            response = self.connection.read_until(b'\n').decode('utf-8', errors='ignore').strip()
+            # Extrae el JSON del mensaje recibido
+            match = re.search(r'({.*})', response)
+            if match:
+                return match.group(1)
+        return None
+
+    def send_data(self, data):
+        if self.connection and self.connection.is_open:
+            # Agrega el delimitador de línea nueva al final del JSON para que el ESP32 lo procese correctamente
+            self.connection.write((data + "\n").encode('utf-8'))

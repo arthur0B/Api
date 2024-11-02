@@ -1,0 +1,52 @@
+project-root/
+│
+├── api/
+│   ├── __init__.py
+│   ├── api.py
+│   └── serial_communication.py
+│
+├── vue-frontend/
+│   (esto es un proyecto Vue.js, inicializa el proyecto aquí si no lo has hecho)
+│
+├── esp32_code/
+│   ├── main/
+│   │   ├── main.c
+│   │   └── CMakeLists.txt
+│   └── CMakeLists.txt
+│
+└── run.py
+//////////////////////////////////////////////////
+
+4. Pasos para Configurar y Probar en ESP-IDF
+Configura el entorno de ESP-IDF:
+
+En la terminal, ejecuta el siguiente comando (ajusta el directorio según tu instalación):
+bash
+Copiar código
+. $HOME/esp/esp-idf/export.sh
+Compila el código:
+
+Navega al directorio del proyecto y ejecuta:
+bash
+Copiar código
+idf.py build
+Carga el código en el ESP32:
+
+Conecta el ESP32 a tu computadora por USB y ejecuta:
+bash
+Copiar código
+idf.py -p /dev/ttyUSB0 flash
+Monitorea la salida en serie:
+
+Para ver los datos que el ESP32 envía y recibe, usa:
+
+bash
+Copiar código
+idf.py -p /dev/ttyUSB0 monitor
+Esto te permitirá ver los mensajes JSON enviados por el ESP32 en respuesta a los comandos desde la API.
+
+Pruebas en la API y la interfaz:
+
+Ejecuta run.py para iniciar la API en Flask y npm run serve vue-frontend para correr el frontend en Vue.js.
+Usa el botón de actualización en la interfaz para ver cómo los datos simulados del ESP32 se actualizan en tiempo real.
+Este flujo te permitirá probar y validar la conexión del ESP32 utilizando ESP-IDF, con toda la estructura necesaria para la simulación y visualización en tiempo real de los datos en la interfaz Vue.js.

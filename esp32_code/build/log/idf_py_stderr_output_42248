@@ -1,0 +1,2 @@
+ninja: error: remove(esp-idf\unity\CMakeFiles\__idf_unity.dir\port\esp\unity_utils_memory_esp.c.obj.d): El proceso no tiene acceso al archivo porque está siendo utilizado por otro proceso.
+

@@ -1,0 +1,149 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "cJSON.h"
+#include "esp_system.h"
+#include "esp_log.h"
+#include "driver/uart.h"
+
+#define UART_NUM UART_NUM_1
+#define BUF_SIZE 256
+#define STACK_SIZE 4096
+
+typedef struct {
+    uint16_t anTbl[2][6];           // Tabla analógica: presión, temperatura, flujo
+    uint16_t digTbl[2][1];          // Tabla digital: alarmas, apertura/cierre
+    uint16_t scalingFactor[6];      // Factores de escalamiento
+    uint16_t scalingOffset[6];      // Offsets de escalamiento
+    uint16_t scaledValues[6];       // Valores escalados
+} SensorData;
+
+SensorData s3Tables;
+static const char *TAG = "ESP32";
+
+// Inicializa los valores simulados de las tablas
+void init_tables() {
+    for (int i = 0; i < 6; i++) {
+        s3Tables.anTbl[0][i] = rand() % 1000;
+        s3Tables.scalingFactor[i] = rand() % 100 + 1;
+        s3Tables.scalingOffset[i] = rand() % 10;
+        s3Tables.scaledValues[i] = (s3Tables.anTbl[0][i] * s3Tables.scalingFactor[i]) + s3Tables.scalingOffset[i];
+    }
+    s3Tables.digTbl[0][0] = 0b00011111;  // Simulación de alarmas
+}
+
+// Genera el JSON a partir de las tablas y variables simuladas
+char *generate_json() {
+    // Actualiza los valores aleatoriamente antes de generar el JSON
+    for (int i = 0; i < 6; i++) {
+        s3Tables.anTbl[0][i] = rand() % 1000;  // Nuevo valor aleatorio
+        s3Tables.scaledValues[i] = (s3Tables.anTbl[0][i] * s3Tables.scalingFactor[i]) + s3Tables.scalingOffset[i];
+    }
+    s3Tables.digTbl[0][0] = rand() % 2 ? 0b00011111 : 0b00000011;  // Cambia aleatoriamente las alarmas
+
+    cJSON *root = cJSON_CreateObject();
+    cJSON_AddNumberToObject(root, "NF_AI_PTL", s3Tables.anTbl[0][0]);
+    cJSON_AddNumberToObject(root, "NF_AI_TTL", s3Tables.anTbl[0][1]);
+    cJSON_AddNumberToObject(root, "NF_AI_PTC", s3Tables.anTbl[0][2]);
+    cJSON_AddNumberToObject(root, "NF_AI_PTA", s3Tables.anTbl[0][3]);
+    cJSON_AddNumberToObject(root, "NF_AI_TTA", s3Tables.anTbl[0][4]);
+    cJSON_AddNumberToObject(root, "NF_AI_FT", s3Tables.anTbl[0][5]);
+
+    cJSON_AddBoolToObject(root, "NF_DI_YA1", s3Tables.digTbl[0][0] & 0x0001);
+    cJSON_AddBoolToObject(root, "NF_DI_YA2", (s3Tables.digTbl[0][0] & 0x0002) >> 1);
+    cJSON_AddBoolToObject(root, "NF_DI_GZA", (s3Tables.digTbl[0][0] & 0x0004) >> 2);
+    cJSON_AddBoolToObject(root, "NF_DI_EAAC", (s3Tables.digTbl[0][0] & 0x0008) >> 3);
+    cJSON_AddBoolToObject(root, "NF_DI_EADC", (s3Tables.digTbl[0][0] & 0x0010) >> 4);
+    cJSON_AddBoolToObject(root, "NF_DO_XV", s3Tables.digTbl[1][0] & 0x0001);
+
+    cJSON_AddNumberToObject(root, "NF_SF_PTL", s3Tables.scalingFactor[0]);
+    cJSON_AddNumberToObject(root, "NF_SF_TTL", s3Tables.scalingFactor[1]);
+    cJSON_AddNumberToObject(root, "NF_SF_PTC", s3Tables.scalingFactor[2]);
+    cJSON_AddNumberToObject(root, "NF_SF_PTA", s3Tables.scalingFactor[3]);
+    cJSON_AddNumberToObject(root, "NF_SF_TTA", s3Tables.scalingFactor[4]);
+    cJSON_AddNumberToObject(root, "NF_SF_FT", s3Tables.scalingFactor[5]);
+
+    cJSON_AddNumberToObject(root, "NF_SO_PTL", s3Tables.scalingOffset[0]);
+    cJSON_AddNumberToObject(root, "NF_SO_TTL", s3Tables.scalingOffset[1]);
+    cJSON_AddNumberToObject(root, "NF_SO_PTC", s3Tables.scalingOffset[2]);
+    cJSON_AddNumberToObject(root, "NF_SO_PTA", s3Tables.scalingOffset[3]);
+    cJSON_AddNumberToObject(root, "NF_SO_TTA", s3Tables.scalingOffset[4]);
+    cJSON_AddNumberToObject(root, "NF_SO_FT", s3Tables.scalingOffset[5]);
+
+    cJSON_AddNumberToObject(root, "NF_SV_PTL", s3Tables.scaledValues[0]);
+    cJSON_AddNumberToObject(root, "NF_SV_TTL", s3Tables.scaledValues[1]);
+    cJSON_AddNumberToObject(root, "NF_SV_PTC", s3Tables.scaledValues[2]);
+    cJSON_AddNumberToObject(root, "NF_SV_PTA", s3Tables.scaledValues[3]);
+    cJSON_AddNumberToObject(root, "NF_SV_TTA", s3Tables.scaledValues[4]);
+    cJSON_AddNumberToObject(root, "NF_SV_FT", s3Tables.scaledValues[5]);
+
+    char *json_str = cJSON_PrintUnformatted(root);
+    cJSON_Delete(root);
+
+    return json_str;
+}
+
+// Procesa los comandos recibidos para actualizar valores
+void handle_command(char *command) {
+    cJSON *json = cJSON_Parse(command);
+    if (json == NULL) {
+        ESP_LOGE(TAG, "Error al parsear JSON");
+        return;
+    }
+
+    cJSON *cmd = cJSON_GetObjectItem(json, "command");
+    if (cJSON_IsString(cmd) && (strcmp(cmd->valuestring, "update_data") == 0)) {
+        cJSON *data = cJSON_GetObjectItem(json, "data");
+        if (cJSON_IsObject(data)) {
+            cJSON *new_val = NULL;
+            new_val = cJSON_GetObjectItem(data, "NF_AI_PTL");
+            if (cJSON_IsNumber(new_val)) s3Tables.anTbl[0][0] = new_val->valueint;
+
+            new_val = cJSON_GetObjectItem(data, "NF_AI_TTL");
+            if (cJSON_IsNumber(new_val)) s3Tables.anTbl[0][1] = new_val->valueint;
+
+            // Puedes agregar otros valores para actualización aquí...
+            ESP_LOGI(TAG, "Valores actualizados desde API");
+        }
+    }
+    cJSON_Delete(json);
+}
+
+// Envía datos periódicamente y procesa comandos entrantes
+void send_periodic_data(void *pvParameter) {
+    ESP_LOGI(TAG, "Iniciando tarea send_periodic_data");
+    uint8_t buffer[BUF_SIZE];
+    while (1) {
+        int length = uart_read_bytes(UART_NUM, buffer, BUF_SIZE, 20 / portTICK_PERIOD_MS);
+        if (length > 0) {
+            buffer[length] = '\0';
+            ESP_LOGI(TAG, "Comando recibido: %s", buffer);
+            handle_command((char *)buffer);  // Procesar el comando recibido
+        } else {
+            char *json_str = generate_json();
+            ESP_LOGI(TAG, "Enviando datos: %s", json_str);
+            uart_write_bytes(UART_NUM, json_str, strlen(json_str));
+            free(json_str);
+        }
+        vTaskDelay(pdMS_TO_TICKS(1000)); // Envía datos cada 1 segundo
+    }
+}
+
+void app_main() {
+    ESP_LOGI(TAG, "Iniciando ESP32");
+    init_tables();
+
+    uart_config_t uart_config = {
+        .baud_rate = 115200,
+        .data_bits = UART_DATA_8_BITS,
+        .parity = UART_PARITY_DISABLE,
+        .stop_bits = UART_STOP_BITS_1,
+        .flow_ctrl = UART_HW_FLOWCTRL_DISABLE
+    };
+    uart_param_config(UART_NUM, &uart_config);
+    uart_driver_install(UART_NUM, BUF_SIZE * 2, 0, 0, NULL, 0);
+
+    xTaskCreate(&send_periodic_data, "send_periodic_data", STACK_SIZE, NULL, 5, NULL);
+}

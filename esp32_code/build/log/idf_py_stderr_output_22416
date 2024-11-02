@@ -1,0 +1,2 @@
+ninja: error: remove(esp-idf\wpa_supplicant\CMakeFiles\__idf_wpa_supplicant.dir\src\crypto\aes-ccm.c.obj.d): El proceso no tiene acceso al archivo porque está siendo utilizado por otro proceso.
+
